@@ -1,3 +1,4 @@
+// Persona docs were not delivered reliably in testing; instructions now go in the kickoff message.
 import { readFileSync } from 'fs'
 import { join } from 'path'
 

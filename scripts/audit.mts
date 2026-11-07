@@ -3,7 +3,6 @@ import { isRunFinished } from '@zoowork-ai/sdk'
 import { mkdirSync, appendFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { createInterface } from 'readline'
-import { loadPersonaDocs } from '../lib/persona.js'
 import { loadKickoffMessage } from '../lib/kickoff.js'
 
 const RUNS_DIR = join(process.cwd(), 'runs')
@@ -35,7 +34,6 @@ const zc = createZooworkClient()
 const resource: AgentResource = {
   name: 'specguard',
   sandbox: { scope: 'agent' },
-  persona: { docs: loadPersonaDocs() },
   tool_policy: {
     rules: [
       { id: 'allow-exec', match: { tool: 'exec' }, action: 'allow' },

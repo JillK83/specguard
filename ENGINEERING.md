@@ -10,7 +10,7 @@ Test case: Style 553972, long sleeve grindle jersey polo, size M, 22 points of m
 
 - `docs/technical-spec-a.md` is the agent design: kickoff message, reference script, prompt skeleton, verification. It wins on anything about the agent. This file adds the web layer and the confirmed platform facts.
 - `docs/technical-spec-b.md` is the fallback if the sandbox stops working. Not used now, because the platform test passed.
-- `product-rules.md` holds the garment, fabric and fit rules that go into the agent's instructions. Confirmed as the new agent reference file.
+- `product-rules.md` holds the garment, fabric and fit rules. These go in the kickoff message, not via persona docs — persona docs were not reliable in testing.
 - `CLAUDE.md` holds the working rules for coding sessions.
 
 ## Status
@@ -79,8 +79,7 @@ Platform rules: no custom agent loop. Lifecycle is createAgent, startAgent, crea
 
 ## Run flow
 
-1. The page calls a server route. The route reads data/polo_input_size_m.csv and the rules text, and builds the kickoff message from Spec A section 3: task line, CSV text, product rules, and the instruction to write output/revision_log.md and wait for approval.
-   The route calls loadKickoffMessage() from lib/kickoff.ts.
+1. The page calls a server route. The route calls loadKickoffMessage() from lib/kickoff.ts, which reads data/polo_input_size_m.csv, agent-prompt.md, and product-rules.md, and builds the kickoff message in this order: task line, agent instructions (with the reference script and CSV already embedded), product rules, CSV text, and the instruction to write output/revision_log.md and wait for approval. All instructions and the reference script go in the kickoff message — persona docs were not reliable in testing.
 2. The route creates a session with that message as the first event, and streams events to the page.
 3. The agent pastes the CSV into the reference script from Spec A section 4, runs it with exec, and reads the printed table. It does no arithmetic of its own. Check exitCode is 0.
 4. The agent groups FAIL and EDGE rows into clusters, ranks causes with the check that settles each, and drafts the log.
