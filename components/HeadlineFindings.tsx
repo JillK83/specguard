@@ -38,12 +38,12 @@ export default function HeadlineFindings({ text }: { text: string }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
       {findings.map((f, i) => (
-        <div key={i} className="border border-zinc-200 rounded-lg bg-white p-4">
+        <div key={i} className="border border-zinc-200 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 p-4">
           {f.tags && (
-            <p className="text-xs font-medium text-zinc-400 mb-1 uppercase tracking-wide">{f.tags}</p>
+            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1 uppercase tracking-wide">{f.tags}</p>
           )}
-          <h3 className="text-sm font-semibold text-zinc-900 mb-2">{f.title}</h3>
-          <p className="text-sm text-zinc-600 leading-relaxed whitespace-pre-line">{f.body}</p>
+          <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{f.title}</h3>
+          <p className="text-base text-zinc-700 dark:text-zinc-300 leading-relaxed whitespace-pre-line">{f.body}</p>
         </div>
       ))}
     </div>

@@ -9,9 +9,11 @@ function statusLabel(s: PomStatus): string {
 }
 
 function statusClass(s: PomStatus): string {
-  if (s === 'FAIL') return 'text-red-700 bg-red-50 px-1.5 py-0.5 rounded text-xs font-medium whitespace-nowrap'
-  if (s === 'EDGE') return 'text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded text-xs font-medium whitespace-nowrap'
-  return 'text-emerald-700 text-xs font-medium whitespace-nowrap'
+  if (s === 'FAIL')
+    return 'text-red-700 bg-red-50 dark:text-red-300 dark:bg-red-900 px-1.5 py-0.5 rounded text-sm font-medium whitespace-nowrap'
+  if (s === 'EDGE')
+    return 'text-amber-700 bg-amber-50 dark:text-amber-300 dark:bg-amber-900 px-1.5 py-0.5 rounded text-sm font-medium whitespace-nowrap'
+  return 'text-emerald-700 dark:text-emerald-400 text-sm font-medium whitespace-nowrap'
 }
 
 function isDim(row: ScriptOutputRow): boolean {
@@ -41,14 +43,14 @@ export default function FlagTable({ rows, noteMap }: Props) {
   }
 
   return (
-    <div className="border border-zinc-200 rounded-lg bg-white">
-      <div className="px-4 py-3 border-b border-zinc-100 flex items-center justify-between flex-wrap gap-2">
+    <div className="border border-zinc-200 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900">
+      <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-700 flex items-center justify-between flex-wrap gap-2">
         <div>
-          <span className="text-sm font-semibold text-zinc-800">Flag table</span>
-          <span className="ml-2 text-xs text-zinc-400">Calculated by script</span>
+          <span className="text-base font-semibold text-zinc-800 dark:text-zinc-200">Flag table</span>
+          <span className="ml-2 text-sm text-zinc-600 dark:text-zinc-400">Calculated by script</span>
         </div>
         <div className="flex items-center gap-3">
-          <label className="flex items-center gap-1.5 text-xs text-zinc-600 cursor-pointer select-none">
+          <label className="flex items-center gap-1.5 text-sm text-zinc-700 dark:text-zinc-300 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={showChangedOnly}
@@ -59,42 +61,53 @@ export default function FlagTable({ rows, noteMap }: Props) {
           </label>
           <button
             onClick={copyTable}
-            className="text-xs text-zinc-600 border border-zinc-200 rounded px-2 py-1 hover:bg-zinc-50"
+            className="text-sm text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-600 rounded px-2 py-1 hover:bg-zinc-50 dark:hover:bg-zinc-800"
           >
             {copied ? 'Copied ✓' : 'Copy table'}
           </button>
         </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-xs">
+        <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-zinc-100 bg-zinc-50">
-              <th className="px-3 py-2 text-left text-zinc-500 font-medium">Code</th>
-              <th className="px-3 py-2 text-left text-zinc-500 font-medium">TD variance</th>
-              <th className="px-3 py-2 text-left text-zinc-500 font-medium">TD status</th>
-              <th className="px-3 py-2 text-left text-zinc-500 font-medium">Factory variance</th>
-              <th className="px-3 py-2 text-left text-zinc-500 font-medium">Factory status</th>
-              <th className="px-3 py-2 text-left text-zinc-500 font-medium">Note</th>
+            <tr className="border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
+              <th className="px-3 py-2 text-left text-zinc-700 dark:text-zinc-300 font-medium">Code</th>
+              <th className="px-3 py-2 text-left text-zinc-700 dark:text-zinc-300 font-medium">TD variance</th>
+              <th className="px-3 py-2 text-left text-zinc-700 dark:text-zinc-300 font-medium">TD status</th>
+              <th className="px-3 py-2 text-left text-zinc-700 dark:text-zinc-300 font-medium">Factory variance</th>
+              <th className="px-3 py-2 text-left text-zinc-700 dark:text-zinc-300 font-medium">Factory status</th>
+              <th className="px-3 py-2 text-left text-zinc-700 dark:text-zinc-300 font-medium">Note</th>
             </tr>
           </thead>
           <tbody>
-            {displayed.map((row) => (
-              <tr
-                key={row.code}
-                className={`border-b border-zinc-50 last:border-0 ${isDim(row) ? 'opacity-35' : ''}`}
-              >
-                <td className="px-3 py-1.5 font-mono text-zinc-700">{row.code}</td>
-                <td className="px-3 py-1.5 font-mono text-zinc-800">{row.td_var}</td>
-                <td className="px-3 py-1.5">
-                  <span className={statusClass(row.td_status)}>{statusLabel(row.td_status)}</span>
-                </td>
-                <td className="px-3 py-1.5 font-mono text-zinc-800">{row.fac_var}</td>
-                <td className="px-3 py-1.5">
-                  <span className={statusClass(row.fac_status)}>{statusLabel(row.fac_status)}</span>
-                </td>
-                <td className="px-3 py-1.5 text-zinc-500">{noteMap.get(row.code) ?? ''}</td>
-              </tr>
-            ))}
+            {displayed.map((row) => {
+              const dim = isDim(row)
+              return (
+                <tr
+                  key={row.code}
+                  className="border-b border-zinc-100 dark:border-zinc-800 last:border-0"
+                >
+                  <td className={`px-3 py-2 font-mono ${dim ? 'text-zinc-500 dark:text-zinc-500' : 'text-zinc-700 dark:text-zinc-300'}`}>
+                    {row.code}
+                  </td>
+                  <td className={`px-3 py-2 font-mono ${dim ? 'text-zinc-500 dark:text-zinc-500' : 'text-zinc-800 dark:text-zinc-200'}`}>
+                    {row.td_var}
+                  </td>
+                  <td className="px-3 py-2">
+                    <span className={statusClass(row.td_status)}>{statusLabel(row.td_status)}</span>
+                  </td>
+                  <td className={`px-3 py-2 font-mono ${dim ? 'text-zinc-500 dark:text-zinc-500' : 'text-zinc-800 dark:text-zinc-200'}`}>
+                    {row.fac_var}
+                  </td>
+                  <td className="px-3 py-2">
+                    <span className={statusClass(row.fac_status)}>{statusLabel(row.fac_status)}</span>
+                  </td>
+                  <td className={`px-3 py-2 ${dim ? 'text-zinc-500 dark:text-zinc-500' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                    {noteMap.get(row.code) ?? ''}
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

@@ -40,22 +40,22 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 pb-24">
-      <header className="bg-white border-b border-zinc-200 sticky top-0 z-10">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 pb-24">
+      <header className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-base font-semibold text-zinc-900">SpecGuard</h1>
-            <p className="text-sm text-zinc-500">Style 553972 LS Polo, Size M</p>
-            <p className="text-xs text-zinc-400 mt-0.5">Factory column is simulated and illustrative</p>
+            <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">SpecGuard</h1>
+            <p className="text-base text-zinc-700 dark:text-zinc-300">Style 553972 LS Polo, Size M</p>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-0.5">Factory column is simulated and illustrative</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs bg-zinc-100 text-zinc-600 px-2 py-1 rounded font-medium">
+            <span className="text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 px-2 py-1 rounded font-medium">
               Saved run, recorded 7 Nov 2:19 PM
             </span>
             <button
               disabled
               title="Live mode coming"
-              className="text-xs text-zinc-300 border border-zinc-200 rounded px-3 py-1.5 cursor-not-allowed select-none"
+              className="text-sm text-zinc-500 dark:text-zinc-500 border border-zinc-300 dark:border-zinc-600 rounded px-3 py-1.5 cursor-not-allowed select-none"
             >
               Run audit (live)
             </button>
@@ -65,10 +65,10 @@ export default function Home() {
 
       <main className="max-w-5xl mx-auto px-4 py-5 space-y-4">
         {!data && !loadError && (
-          <p className="text-sm text-zinc-400 py-10 text-center">Loading…</p>
+          <p className="text-base text-zinc-600 dark:text-zinc-400 py-10 text-center">Loading…</p>
         )}
         {loadError && (
-          <p className="text-sm text-red-600 py-10 text-center">Failed to load: {loadError}</p>
+          <p className="text-base text-red-600 dark:text-red-400 py-10 text-center">Failed to load: {loadError}</p>
         )}
 
         {data && (

@@ -43,16 +43,16 @@ export default function Fit1Reference() {
   }
 
   return (
-    <div className="border border-zinc-200 rounded-lg bg-white">
+    <div className="border border-zinc-200 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900">
       <button
-        className="w-full text-left px-4 py-3 flex items-center justify-between text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+        className="w-full text-left px-4 py-3 flex items-center justify-between text-base font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
         onClick={() => setOpen((o) => !o)}
       >
         <span>
           Fit 1 reference{' '}
-          <span className="font-normal text-zinc-400">(senior designer, demo only)</span>
+          <span className="font-normal text-zinc-500 dark:text-zinc-400">(senior designer, demo only)</span>
         </span>
-        <span className="text-zinc-400 text-xs">{open ? '▲' : '▼'}</span>
+        <span className="text-zinc-500 dark:text-zinc-400 text-sm">{open ? '▲' : '▼'}</span>
       </button>
       {open && figures.length > 0 && (
         <div className="px-4 pb-4">
@@ -62,9 +62,9 @@ export default function Fit1Reference() {
                 <img
                   src={f.src}
                   alt={f.alt}
-                  className="w-full rounded border border-zinc-100"
+                  className="w-full rounded border border-zinc-200 dark:border-zinc-700"
                 />
-                <figcaption className="text-xs text-zinc-400 mt-1">{f.caption}</figcaption>
+                <figcaption className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">{f.caption}</figcaption>
               </figure>
             ))}
           </div>
