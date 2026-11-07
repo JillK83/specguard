@@ -40,3 +40,9 @@ Use these as hypotheses, never as conclusions. For each, say what you see, what 
 - A measurement on spec does not mean the garment fits. A measurement off spec does not mean the pattern is wrong.
 - Photos are supporting evidence only.
 - Never state a cause as fact. Say what you see, what you suspect, and what a person should verify.
+
+## Block and fabrication
+
+- Standard block. Shoulder slope, across shoulder, across chest, across back, chest width, body length and sleeve length come from a standard block. They should not move between fabrications. A FAIL on these is factory drift.
+- New fabrication, not a new style. The body fabric is heavier than the earlier short sleeve polo, and the specs were carried over from the lighter fabric.
+- Fabric-driven groups. Sleeve (armhole, muscle, forearm, cuff opening, sleeve cap height) and neck (collar band, neck width, neck drop) can need a spec change for a heavier fabric. A same-direction miss across these is a reason to question the spec before the factory.

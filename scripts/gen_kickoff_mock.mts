@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import { buildKickoffMessage, buildScriptText } from '../lib/kickoff'
+import { buildKickoffMessage, buildScriptText, loadSpecValues } from '../lib/kickoff'
 
 const root = process.cwd()
 
@@ -20,7 +20,8 @@ try {
   // optional
 }
 
-const msg = buildKickoffMessage(agentPrompt, productRules, fitNotes)
+const specValues = loadSpecValues()
+const msg = buildKickoffMessage(agentPrompt, productRules, fitNotes, specValues)
 writeFileSync(join(root, 'mock', 'kickoff_message.txt'), msg, 'utf-8')
 console.log('Written: mock/kickoff_message.txt')
 
