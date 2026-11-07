@@ -34,3 +34,27 @@ export interface WriteApprovalPayload {
   timeoutAt: string;
   toolCallId: string;
 }
+
+export interface FitCommentGroup {
+  heading: string;
+  comments: string[];
+}
+
+export interface ParsedRevisionLog {
+  headlineFindings?: string;
+  clusters?: string;
+  measurementDisagreements?: {
+    raw: string;
+    rows: string[][];
+  };
+  fitComments?: {
+    raw: string;
+    groups: FitCommentGroup[];
+  };
+  flagTable?: {
+    raw: string;
+    rows: string[][];
+  };
+  internalOpenQuestions?: string;
+  missing: string[];
+}

@@ -1,9 +1,8 @@
-import { createZooworkClient, type AgentResource } from '@zoowork-ai/sdk'
 import { isRunFinished } from '@zoowork-ai/sdk'
 import { mkdirSync, appendFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { createInterface } from 'readline'
-import { loadKickoffMessage, loadCsvText, buildScriptText } from '../lib/kickoff.js'
+import { getClient, ensureAgent, uploadScript, startSession } from '../lib/zoowork.js'
 
 const RUNS_DIR = join(process.cwd(), 'runs')
 const TIMEOUT_MS = 5 * 60 * 1000
@@ -29,40 +28,15 @@ function truncate(s: string, max = 300): string {
 
 ensureRunsDir()
 
-const zc = createZooworkClient()
+const zc = getClient()
 
-const resource: AgentResource = {
-  name: 'specguard',
-  sandbox: { scope: 'agent' },
-  tool_policy: {
-    rules: [
-      { id: 'allow-exec', match: { tool: 'exec' }, action: 'allow' },
-      { id: 'gate-write', match: { tool: 'write' }, action: 'requireApproval' },
-    ],
-  },
-}
-
-const modelEnv = process.env['SPECGUARD_MODEL']
-if (modelEnv) {
-  resource.model = { primary: modelEnv }
-}
-
-console.log('Creating agent...')
-const agent = await zc.createAgent({ resource })
-console.log('Agent:', agent.agent_id)
-
-await zc.startAgent(agent.agent_id)
-await zc.waitUntilRunning(agent.agent_id)
-console.log('Agent running.')
+console.log('Creating or reusing agent...')
+const agentId = await ensureAgent(zc)
+console.log('Agent:', agentId)
 
 console.log('Uploading reference script...')
 try {
-  const uploadResult = await zc.uploadFile(
-    agent.agent_id,
-    'input/reference_script.py',
-    buildScriptText(loadCsvText())
-  )
-  console.log(`Uploaded: path=${uploadResult.path} size=${uploadResult.size} sha256=${uploadResult.sha256}`)
+  await uploadScript(agentId, zc)
 } catch (err: unknown) {
   const e = err as Record<string, unknown>
   console.error('uploadFile failed:')
@@ -72,9 +46,7 @@ try {
   process.exit(1)
 }
 
-const session = await zc.createSession(agent.agent_id, {
-  initial_events: [{ type: 'user.message', content: loadKickoffMessage() }],
-})
+const session = await startSession(agentId, zc)
 console.log('Session:', session.session_id)
 
 const scriptOutputPath = join(RUNS_DIR, `script_output.${timestamp}.txt`)
@@ -86,7 +58,7 @@ const timer = setTimeout(() => {
 }, TIMEOUT_MS)
 
 try {
-  for await (const ev of zc.streamEvents(agent.agent_id, session.session_id, { signal: ac.signal })) {
+  for await (const ev of zc.streamEvents(agentId, session.session_id, { signal: ac.signal })) {
     const raw = JSON.stringify(ev.payload)
     console.log(`[${ev.eventType}] ${truncate(raw)}`)
 
@@ -140,13 +112,13 @@ try {
 
       const answer = await ask('approve? (y/n): ')
       if (answer.toLowerCase() === 'y') {
-        await zc.resolveApproval(agent.agent_id, approvalId, { decision: 'allow-once' })
+        await zc.resolveApproval(agentId, approvalId, { decision: 'allow-once' })
         console.log('Approved.')
       } else {
-        await zc.resolveApproval(agent.agent_id, approvalId, { decision: 'deny' })
+        await zc.resolveApproval(agentId, approvalId, { decision: 'deny' })
         const note = await ask('Rejection note: ')
         if (note) {
-          await zc.postEvents(agent.agent_id, session.session_id, [
+          await zc.postEvents(agentId, session.session_id, [
             { type: 'user.message', content: note },
           ])
           console.log('Rejection note sent. Agent will revise.')
