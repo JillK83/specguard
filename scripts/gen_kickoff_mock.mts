@@ -4,14 +4,13 @@ import { buildKickoffMessage } from '../lib/kickoff'
 
 const root = process.cwd()
 
-// Short placeholder CSV — shows the layout, not real data.
-const placeholderCsv = `code,description,spec,tol_minus,tol_plus,td_measured,factory_measured
-NK01,Neck width,17,1/4,1/4,17 1/8,17 1/4
-CL04,Collar band width,1 1/2,1/4,1/4,2,1 5/8
-AH01,Armhole straight,9 1/2,1/4,1/4,9 1/4,9 3/8`
+// First 4 lines of the real CSV (header + 3 rows) so the mock always uses the real headers.
+const placeholderCsv = readFileSync(join(root, 'data', 'polo_input_size_m.csv'), 'utf-8')
+  .split('\n')
+  .slice(0, 4)
+  .join('\n')
 
-const rulesText = readFileSync(join(root, 'product-rules.md'), 'utf-8')
-const msg = buildKickoffMessage(placeholderCsv, rulesText)
+const msg = buildKickoffMessage(placeholderCsv)
 writeFileSync(join(root, 'mock', 'kickoff_message.txt'), msg, 'utf-8')
 console.log('Written: mock/kickoff_message.txt')
 

@@ -43,3 +43,6 @@ next-env.d.ts
 
 # local logs
 run.log
+
+# audit run outputs
+runs/
