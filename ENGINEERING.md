@@ -20,7 +20,7 @@ Test case: Style 553972, long sleeve grindle jersey polo, size M, 22 points of m
 | Next.js scaffold, SDK, tsx | Done |
 | API key in .env.local | Done (server only) |
 | Platform test (scripts/hello.mts) | Passed. Python ran with exit code 0, write and exec were gated and approved, run finished succeeded |
-| Reference script check (9 PASS, 7 EDGE, 6 FAIL) | Not started |
+| Reference script check (9 PASS, 7 EDGE, 6 FAIL) | Done |
 | Agent prompt and rules | Not started |
 | Server routes | Not started |
 | Page | Not started |
@@ -196,5 +196,4 @@ Cut order if short: polish, then clusters and disagreement views, then live prog
 | --- | --- | --- |
 | Can a rule gate only a write to output/revision_log.md by path? | ZooWork staff | Block 3 |
 | Which models can be set in model.primary? | ZooWork staff | Block 2 |
-| Collar length (CL03) and collar point (CL05) vs page 15 of the tech pack | Jillian | Block 1 |
 | Is the old API key revoked? | Jillian | Security |
