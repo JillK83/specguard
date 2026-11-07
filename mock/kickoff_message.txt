@@ -1,0 +1,53 @@
+TASK: Audit Style 553972 LS Polo, Size M. All units inches.
+
+SPEC AND MEASUREMENTS (CSV)
+code,description,spec,tol_minus,tol_plus,td_measured,factory_measured
+NK01,Neck width,17,1/4,1/4,17 1/8,17 1/4
+CL04,Collar band width,1 1/2,1/4,1/4,2,1 5/8
+AH01,Armhole straight,9 1/2,1/4,1/4,9 1/4,9 3/8
+
+PRODUCT RULES
+# SpecGuard Product Rules
+
+Paste this into the agent's prompt. Style 553972, English Laundry LS Polo, Grindle Jersey, Fall 25. It holds facts about the garment and patterns to look for. It deliberately holds no target spec numbers, because the agent should find problems from the measurements, not read the fixes. Do not add revised specs, fit comments, or numbers from the Fit 1 evaluation.
+
+## Fabric
+
+- Grindle jersey, a heavier knit than this brand's earlier short sleeve polo.
+- Prone to torque, where a seam swings to one side on the body. The cause can be fabric spirality, cutting off grain, uneven seam tension, or pressing. Pattern balance is not the only suspect.
+- Net spec: sizes are meant to hold after wash, with no shrinkage allowance.
+
+## Construction
+
+- Collar: two pieces of self fabric with a quarter inch single needle topstitch around the edge. The top layer is fused.
+- Collar stand: self fabric on top, trim fabric inside, a single layer of fusing. Single needle edge stitch only, never double needle at the neckband. Seam allowances inside the band are graded to cut bulk.
+- Neck piping: cut on true bias with ease built in. It finishes before the placket turnback, not at the center front edge.
+- Placket: self fabric top placket with a facing, a quarter inch box stitch at the base, vertical buttonholes, aligned with the collar stand button.
+- Side seams: press the seam allowance toward the back with a clean overlock finish. Both side seams should lie the same way.
+- Side vents: turnback with a single needle edge stitch and a bar tack at the top. The woven logo label sits in the right side seam, half an inch above the vent.
+- Armhole: quarter inch single needle topstitch, seam allowance pressed toward the body.
+
+## Collar stand shape
+
+The collar stand height at center front is a reference measurement and is not graded. It should be shorter than the stand at center back, so the stand tapers toward the front. If the factory takes seam allowances unevenly, the front can end up as tall as the back or taller. That reads as a chunky, tight neck even when the measured numbers look fine. When the neck wears tight or looks bulky, suggest checking the center front stand height against the taper.
+
+## Patterns that tend to travel together
+
+Use these as hypotheses, never as conclusions. For each, say what you see, what you suspect, and the check that would settle it.
+
+**Sleeve and armhole cluster.** When the armhole, muscle, forearm and cuff all read tight and the sleeve cap reads high, suspect an armhole that sits too high and a sleeve cap with excess height, which can choke the wearer and cause dimpling in a heavy knit. Checks: measure the armhole and sleeve cap on the pattern pieces against the finished sample, and compare the sleeve head shape to the armhole shape. A factory losing size between pattern and sample, especially on the forearm, is another suspect.
+
+**Collar and neck cluster.** When the collar band, neck width or neck drop disagree between measurers, or the band measures large while the neck wears tight, suspect the setting of the band onto the neck, the tension of the stitching, and bulk where the stand, bias piping and placket turnback meet at center front. Checks: measure the band relaxed and under normal tension, inspect seam allowance grading and fusing trim, and compare the pattern neck width to the sample neck width. A neck that grows between the pattern and the sample points to the collar setting, not the pattern.
+
+**Torque and side seam balance.** When a side seam swings toward the back on the body while every body measurement passes, the measurements cannot see it. Suspect fabric spirality, cutting off grain, uneven overlock feed, or pressing. Checks: look at the fit photos from the side, review fabric grain alignment before cutting, and check the seam feed on both sides.
+
+**Measurement method disagreements.** Neck width, collar band, collar length at the top edge, neck drop and armhole are curved or soft measurements where the tape start point and tension change the number. When the TD and factory disagree there, settle the method first. Suggest asking the factory to re-measure the point and send a photo or video of how it was taken.
+
+## Limits
+
+- Measurements cannot show torque, drape, or workmanship quality.
+- A measurement on spec does not mean the garment fits. A measurement off spec does not mean the pattern is wrong.
+- Photos are supporting evidence only.
+- Never state a cause as fact. Say what you see, what you suspect, and what a person should verify.
+
+Run the reference script from your instructions using exec. Check that the exit code is 0. Using only the script output, group FAIL and EDGE rows into clusters, rank likely causes with the check that would settle each, and draft the revision log. Write the completed log to output/revision_log.md and wait for approval before continuing.
