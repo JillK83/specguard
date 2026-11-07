@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# demo images (not committed)
+public/demo/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

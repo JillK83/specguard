@@ -1,7 +1,7 @@
 import { createZooworkClient, type AgentResource, type ZooworkClient } from '@zoowork-ai/sdk'
 import { mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import { buildScriptText, loadCsvText, loadKickoffMessage } from './kickoff.js'
+import { buildScriptText, loadCsvText, loadKickoffMessage } from './kickoff'
 
 const RUNS_DIR = join(process.cwd(), 'runs')
 

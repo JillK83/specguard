@@ -1,4 +1,4 @@
-import type { ScriptOutputRow, PomStatus, GapClass, ParsedRevisionLog, FitCommentGroup } from './types.js'
+import type { ScriptOutputRow, PomStatus, GapClass, ParsedRevisionLog, FitCommentGroup } from './types'
 
 const SCRIPT_HEADER = 'code,td_var,td_status,fac_var,fac_status,gap_td_minus_fac,gap_class'
 
