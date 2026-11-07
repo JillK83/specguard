@@ -13,7 +13,7 @@ export function buildKickoffMessage(csvText: string, agentPrompt: string, produc
   const normalizedCsv = csvText.replace(/\r\n/g, '\n')
   const promptWithCsv = agentPrompt.replace(
     CSV_PLACEHOLDER,
-    `csv_text = '''\n${normalizedCsv.trim()}\n'''`
+    `csv_text = '''${normalizedCsv.trim()}'''`
   )
 
   return [

@@ -96,12 +96,10 @@ def run(csv_text):
             cls = 'NOISE'
         print(','.join([r['POM_Code'], frac(tv), ts, frac(fv), fs, frac(gap), cls]))
 
-csv_text = '''
-POM_Code,POM_Description,Spec_M_Original,Tol_Minus,Tol_Plus,TD_Measured,Factory_Measured,Unit
+csv_text = '''POM_Code,POM_Description,Spec_M_Original,Tol_Minus,Tol_Plus,TD_Measured,Factory_Measured,Unit
 L01,FRONT BODY LENGTH FROM HPS,28.5,0.5,0.5,28.5,28.5,in
 S01,SHOULDER SLOPE (SET IN SLEEVE),2.25,0.125,0.125,2.5,2.5,in
-S02,SHOULDER FORWARD,0.5,0.125,0.125,0.625,0.625,in
-'''
+S02,SHOULDER FORWARD,0.5,0.125,0.125,0.625,0.625,in'''
 run(csv_text)
 ```
 
