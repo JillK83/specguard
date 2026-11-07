@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SpecGuard
 
-## Getting Started
+A first-pass tech pack and fit auditor for apparel technical designers. It checks a factory sample against its graded spec, does the arithmetic with code, groups related misses, and drafts fit comments for a person to review and approve. It never claims to know the cause of a fit problem. It says what it sees, what it suspects, and what a human should check.
 
-First, run the development server:
+Built solo for the AI Tinkerers NYC Fashion & Finance hackathon with ZooWork. This is a proof of concept for one style (Style 553972, long sleeve grindle jersey polo, size M, 22 points of measure).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## How it works
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. The app sends the spec, the measurements and the product rules to an agent running on ZooWork Managed Agents.
+2. The agent runs a script in its sandbox for every number. It does no arithmetic of its own.
+3. The agent groups misses into clusters, ranks likely causes, and drafts numbered fit comments, with open questions it cannot answer kept separate.
+4. The agent writes a revision log, and that write waits for a person to approve or reject it.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Status
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Work in progress. The platform test passes and the scaffold, types and mock data are in place. The agent prompt, server routes and page are next.
 
-## Learn More
+## Docs
 
-To learn more about Next.js, take a look at the following resources:
+- ENGINEERING.md: stack, ZooWork facts, run flow, data contracts, build plan
+- docs/technical-spec-a.md: agent design
+- product-rules.md: garment, fabric and fit rules given to the agent
+- CLAUDE.md: working rules for coding sessions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Running
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Needs Node 22 or higher and a ZooWork API key. Copy .env.example to .env.local, add the key, and keep it out of git and chat. Run scripts with the .mts extension.
 
-## Deploy on Vercel
+    npm install
+    npm run typecheck
+    npm run dev
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The factory measurement column is simulated and illustrative. The senior designer's original fit evaluation is used only to check results and is never given to the agent.
