@@ -1,46 +1,51 @@
 'use client'
 import { useState, useEffect } from 'react'
 
+const IMAGES = [
+  {
+    src: '/demo/fit1-photo.png',
+    alt: 'Fit photos from the real fit session',
+    caption: 'Fit photos from the real fit session',
+  },
+  {
+    src: '/demo/fit1-photo-2.png',
+    alt: 'Fit photos from the real fit session',
+    caption: 'Fit photos from the real fit session',
+  },
+  {
+    src: '/demo/fit1-comments.png',
+    alt: 'Comments from the real fit session',
+    caption: 'Comments from the real fit session',
+  },
+]
+
 export default function Fit1Reference() {
   const [open, setOpen] = useState(false)
-  const [commentsOk, setCommentsOk] = useState(true)
-  const [photoOk, setPhotoOk] = useState(true)
+  const [ok, setOk] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(IMAGES.map((img) => [img.src, true])),
+  )
   const [resolved, setResolved] = useState(false)
 
   useEffect(() => {
-    let pending = 2
+    let pending = IMAGES.length
     function done() {
       pending -= 1
       if (pending === 0) setResolved(true)
     }
-    function tryLoad(src: string, onOk: () => void, onFail: () => void) {
-      const img = new window.Image()
-      img.onload = () => { onOk(); done() }
-      img.onerror = () => { onFail(); done() }
-      img.src = src
+    for (const { src } of IMAGES) {
+      const el = new window.Image()
+      el.onload = () => done()
+      el.onerror = () => {
+        setOk((prev) => ({ ...prev, [src]: false }))
+        done()
+      }
+      el.src = src
     }
-    tryLoad('/demo/fit1-comments.png', () => setCommentsOk(true), () => setCommentsOk(false))
-    tryLoad('/demo/fit1-photo.png', () => setPhotoOk(true), () => setPhotoOk(false))
   }, [])
 
-  // Hide panel only once both results are known and both failed
-  if (resolved && !commentsOk && !photoOk) return null
+  const visible = IMAGES.filter((img) => ok[img.src])
 
-  const figures: { src: string; alt: string; caption: string }[] = []
-  if (commentsOk) {
-    figures.push({
-      src: '/demo/fit1-comments.png',
-      alt: 'Comments from the real fit session',
-      caption: 'Comments from the real fit session',
-    })
-  }
-  if (photoOk) {
-    figures.push({
-      src: '/demo/fit1-photo.png',
-      alt: 'Fit photo from the real fit session',
-      caption: 'Fit photo from the real fit session',
-    })
-  }
+  if (resolved && visible.length === 0) return null
 
   return (
     <div className="border border-zinc-200 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900">
@@ -54,16 +59,18 @@ export default function Fit1Reference() {
         </span>
         <span className="text-zinc-500 dark:text-zinc-400 text-sm">{open ? '▲' : '▼'}</span>
       </button>
-      {open && figures.length > 0 && (
+      {open && visible.length > 0 && (
         <div className="px-4 pb-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            {figures.map((f) => (
-              <figure key={f.src} className="flex-1 min-w-0">
-                <img
-                  src={f.src}
-                  alt={f.alt}
-                  className="w-full rounded border border-zinc-200 dark:border-zinc-700"
-                />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {visible.map((f) => (
+              <figure key={f.src} className="min-w-0">
+                <a href={f.src} target="_blank" rel="noopener noreferrer" className="block">
+                  <img
+                    src={f.src}
+                    alt={f.alt}
+                    className="w-full rounded border border-zinc-200 dark:border-zinc-700 hover:opacity-90 transition-opacity"
+                  />
+                </a>
                 <figcaption className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">{f.caption}</figcaption>
               </figure>
             ))}
