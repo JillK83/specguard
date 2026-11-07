@@ -1,46 +1,52 @@
 import { readFileSync } from 'fs'
 import { join } from 'path'
 
-const CSV_PLACEHOLDER = "csv_text = '''PASTE CSV HERE'''"
+const SCRIPT_PLACEHOLDER = "csv_text = '''PASTE CSV HERE'''"
 
-export function buildKickoffMessage(csvText: string, agentPrompt: string, productRules: string): string {
-  if (!agentPrompt.includes(CSV_PLACEHOLDER)) {
+export function buildScriptText(csvText: string): string {
+  const root = process.cwd()
+  let template: string
+  try {
+    template = readFileSync(join(root, 'sandbox', 'reference_script.template.py'), 'utf-8')
+  } catch {
+    throw new Error('Missing required file: sandbox/reference_script.template.py')
+  }
+  if (!template.includes(SCRIPT_PLACEHOLDER)) {
     throw new Error(
-      `agent-prompt.md is missing the placeholder line: ${CSV_PLACEHOLDER}`
+      `sandbox/reference_script.template.py is missing the placeholder line: ${SCRIPT_PLACEHOLDER}`
     )
   }
+  const normalizedCsv = csvText.replace(/\r\n/g, '\n').trim()
+  return template.replace(SCRIPT_PLACEHOLDER, `csv_text = '''${normalizedCsv}'''`)
+}
 
-  const normalizedCsv = csvText.replace(/\r\n/g, '\n')
-  const promptWithCsv = agentPrompt.replace(
-    CSV_PLACEHOLDER,
-    `csv_text = '''${normalizedCsv.trim()}'''`
-  )
-
+export function buildKickoffMessage(agentPrompt: string, productRules: string): string {
   return [
     'TASK: Style 553972 LS Polo, Size M, all units inches.',
     '',
     'AGENT INSTRUCTIONS',
-    promptWithCsv.trim(),
+    agentPrompt.trim(),
+    '',
+    'The reference script has already been uploaded to /workspace/input/reference_script.py with the CSV inside it. Run it with exec using exactly: python3 /workspace/input/reference_script.py. Do not open, edit, retype or copy it.',
     '',
     'PRODUCT RULES',
     productRules.trim(),
-    '',
-    'SPEC AND MEASUREMENTS (CSV)',
-    normalizedCsv.trim(),
     '',
     'Run the audit. Write the log to output/revision_log.md and wait for approval before continuing.',
   ].join('\n')
 }
 
-export function loadKickoffMessage(): string {
+export function loadCsvText(): string {
   const root = process.cwd()
-
-  let csvText: string
   try {
-    csvText = readFileSync(join(root, 'data', 'polo_input_size_m.csv'), 'utf-8')
+    return readFileSync(join(root, 'data', 'polo_input_size_m.csv'), 'utf-8')
   } catch {
     throw new Error('Missing required file: data/polo_input_size_m.csv')
   }
+}
+
+export function loadKickoffMessage(): string {
+  const root = process.cwd()
 
   let agentPrompt: string
   try {
@@ -56,5 +62,5 @@ export function loadKickoffMessage(): string {
     throw new Error('Missing required file: product-rules.md')
   }
 
-  return buildKickoffMessage(csvText, agentPrompt, productRules)
+  return buildKickoffMessage(agentPrompt, productRules)
 }

@@ -3,7 +3,7 @@ import { isRunFinished } from '@zoowork-ai/sdk'
 import { mkdirSync, appendFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { createInterface } from 'readline'
-import { loadKickoffMessage } from '../lib/kickoff.js'
+import { loadKickoffMessage, loadCsvText, buildScriptText } from '../lib/kickoff.js'
 
 const RUNS_DIR = join(process.cwd(), 'runs')
 const TIMEOUT_MS = 5 * 60 * 1000
@@ -54,6 +54,23 @@ console.log('Agent:', agent.agent_id)
 await zc.startAgent(agent.agent_id)
 await zc.waitUntilRunning(agent.agent_id)
 console.log('Agent running.')
+
+console.log('Uploading reference script...')
+try {
+  const uploadResult = await zc.uploadFile(
+    agent.agent_id,
+    'input/reference_script.py',
+    buildScriptText(loadCsvText())
+  )
+  console.log(`Uploaded: path=${uploadResult.path} size=${uploadResult.size} sha256=${uploadResult.sha256}`)
+} catch (err: unknown) {
+  const e = err as Record<string, unknown>
+  console.error('uploadFile failed:')
+  console.error(`  status : ${e['status'] ?? '?'}`)
+  console.error(`  type   : ${e['type'] ?? '?'}`)
+  console.error(`  message: ${e['message'] ?? '?'}`)
+  process.exit(1)
+}
 
 const session = await zc.createSession(agent.agent_id, {
   initial_events: [{ type: 'user.message', content: loadKickoffMessage() }],

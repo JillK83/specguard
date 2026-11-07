@@ -71,7 +71,7 @@ Run a script: `npx tsx --env-file=.env.local scripts/hello.mts`
 | Write approval payload | `arguments.path` and `arguments.content` are in the request, so the page can show the file for review before approval. |
 | Command result | `agent.command_output` carries the printed output in chunk events, then `phase: 'end'` with `exitCode`. |
 | Run end | `run.finished` with status succeeded. |
-| Files in | Do not use `uploadFile`. Pass data inline in the message. A public bug report shows file seeding returning a server error, and it is untested here. |
+| Files in | `uploadFile(agentId, path, content)` writes a file into the agent's sandbox before the session starts. Returns `{ path, size, sha256 }`. Used for the reference script (tested). Pass other data inline in the session message. |
 | Files out | Workspace file read methods are not enabled on the hosted service. Everything the page needs comes from events. |
 | Default model | litellm/gpt-5.6-terra when none is set. Other models unconfirmed. |
 
@@ -79,9 +79,9 @@ Platform rules: no custom agent loop. Lifecycle is createAgent, startAgent, crea
 
 ## Run flow
 
-1. The page calls a server route. The route calls loadKickoffMessage() from lib/kickoff.ts, which reads data/polo_input_size_m.csv, agent-prompt.md, and product-rules.md, and builds the kickoff message in this order: task line, agent instructions (with the reference script and CSV already embedded), product rules, CSV text, and the instruction to write output/revision_log.md and wait for approval. All instructions and the reference script go in the kickoff message — persona docs were not reliable in testing.
-2. The route creates a session with that message as the first event, and streams events to the page.
-3. The agent pastes the CSV into the reference script from Spec A section 4, runs it with exec, and reads the printed table. It does no arithmetic of its own. Check exitCode is 0.
+1. The page calls a server route. The route calls loadKickoffMessage() from lib/kickoff.ts, which reads agent-prompt.md and product-rules.md, and builds the kickoff message in this order: task line, agent instructions, an upload notice, product rules, and the instruction to write output/revision_log.md and wait for approval.
+2. Before creating the session, the route calls uploadFile(agentId, 'input/reference_script.py', buildScriptText(csv)) to place the reference script with the CSV already embedded into the agent's sandbox. The route prints the returned path, size, and sha256 to confirm the upload.
+3. The route creates a session with the kickoff message as the first event, and streams events to the page. The agent runs `python3 /workspace/input/reference_script.py` with exec and reads the printed table. It does no arithmetic of its own. Check exitCode is 0.
 4. The agent groups FAIL and EDGE rows into clusters, ranks causes with the check that settles each, and drafts the log.
 5. The agent writes output/revision_log.md with `write`. Only this write is gated. The approval request carries the full log in `arguments.content`.
 6. The page shows the log with approve and reject. Approve calls resolveApproval with allow-once. Reject calls deny, then sends the reviewer's note as a `user.message`, and the agent revises.

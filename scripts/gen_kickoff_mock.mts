@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import { buildKickoffMessage } from '../lib/kickoff'
+import { buildKickoffMessage, buildScriptText } from '../lib/kickoff'
 
 const root = process.cwd()
 
@@ -13,9 +13,13 @@ const placeholderCsv = readFileSync(join(root, 'data', 'polo_input_size_m.csv'),
 const agentPrompt = readFileSync(join(root, 'agent-prompt.md'), 'utf-8')
 const productRules = readFileSync(join(root, 'product-rules.md'), 'utf-8')
 
-const msg = buildKickoffMessage(placeholderCsv, agentPrompt, productRules)
+const msg = buildKickoffMessage(agentPrompt, productRules)
 writeFileSync(join(root, 'mock', 'kickoff_message.txt'), msg, 'utf-8')
 console.log('Written: mock/kickoff_message.txt')
+
+const scriptPreview = buildScriptText(placeholderCsv)
+writeFileSync(join(root, 'mock', 'uploaded_script_preview.py'), scriptPreview, 'utf-8')
+console.log('Written: mock/uploaded_script_preview.py')
 
 // Build approval.json from revision_log.md so content stays in sync.
 const logContent = readFileSync(join(root, 'mock', 'revision_log.md'), 'utf-8')
