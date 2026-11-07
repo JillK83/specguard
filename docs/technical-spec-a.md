@@ -82,84 +82,55 @@ Run the reference script from your instructions using exec. Check that the exit 
 
 ## 4. Reference script
 
-Paste this into the agent's instructions (section 2 above). The agent substitutes the CSV into the DATA constant and runs it with exec.
+Paste this into the agent's instructions (section 2 above). The agent substitutes the polo_input_size_m.csv content into `csv_text` and runs it with exec.
 
 ```python
-#!/usr/bin/env python3
-"""SpecGuard reference script. Paste polo_input_size_m.csv content into DATA."""
+import csv, io
+from math import gcd
 
-import csv
-from fractions import Fraction
-from io import StringIO
+def frac(x):
+    s = round(abs(x) * 16)
+    if s == 0:
+        return '0'
+    sign = '-' if x < 0 else '+'
+    whole, rem = divmod(s, 16)
+    if rem == 0:
+        return sign + str(whole)
+    g = gcd(rem, 16)
+    f = str(rem // g) + '/' + str(16 // g)
+    return sign + (str(whole) + ' ' + f if whole else f)
 
-# ── PASTE CSV CONTENT HERE ───────────────────────────────────────────────────
-DATA = """\
-code,description,spec,tol_minus,tol_plus,td_measured,factory_measured
-"""
-# ─────────────────────────────────────────────────────────────────────────────
+def status(v, tm, tp):
+    e = 1e-9
+    if v > tp + e or v < -tm - e:
+        return 'FAIL'
+    if abs(v - tp) < e or abs(v + tm) < e:
+        return 'EDGE'
+    return 'PASS'
 
+def run(csv_text):
+    rows = csv.DictReader(io.StringIO(csv_text))
+    print('code,td_var,td_status,fac_var,fac_status,gap_td_minus_fac,gap_class')
+    for r in rows:
+        spec = float(r['Spec_M_Original'])
+        tm, tp = float(r['Tol_Minus']), float(r['Tol_Plus'])
+        td, fac = float(r['TD_Measured']), float(r['Factory_Measured'])
+        tv, fv = td - spec, fac - spec
+        ts, fs = status(tv, tm, tp), status(fv, tm, tp)
+        gap = td - fac
+        if abs(gap) < 1e-9:
+            cls = 'MATCH'
+        elif ts != fs:
+            cls = 'CHANGES_STATUS'
+        else:
+            cls = 'NOISE'
+        print(','.join([r['POM_Code'], frac(tv), ts, frac(fv), fs, frac(gap), cls]))
 
-def parse_frac(s: str) -> Fraction:
-    s = s.strip()
-    if not s or s == "0":
-        return Fraction(0)
-    parts = s.split()
-    if len(parts) == 2:
-        whole = int(parts[0])
-        frac = Fraction(parts[1])
-        return Fraction(whole) + (frac if whole >= 0 else -frac)
-    return Fraction(parts[0])
-
-
-def fmt_frac(f: Fraction) -> str:
-    if f == 0:
-        return "0"
-    sign = "+" if f > 0 else "-"
-    f_abs = abs(f)
-    whole = int(f_abs)
-    remainder = f_abs - whole
-    if whole and remainder:
-        return f"{sign}{whole} {remainder}"
-    if whole:
-        return f"{sign}{whole}"
-    return f"{sign}{remainder}"
-
-
-def pom_status(var: Fraction, tol_m: Fraction, tol_p: Fraction) -> str:
-    if var > tol_p or var < -tol_m:
-        return "FAIL"
-    if var == tol_p or var == -tol_m:
-        return "EDGE"
-    return "PASS"
-
-
-reader = csv.DictReader(StringIO(DATA.strip()))
-print("code,td_var,td_status,fac_var,fac_status,gap_td_minus_fac,gap_class")
-for row in reader:
-    spec = parse_frac(row["spec"])
-    tol_m = parse_frac(row["tol_minus"])
-    tol_p = parse_frac(row["tol_plus"])
-    td = parse_frac(row["td_measured"])
-    fac = parse_frac(row["factory_measured"])
-
-    td_var = td - spec
-    fac_var = fac - spec
-    gap = td_var - fac_var
-
-    td_st = pom_status(td_var, tol_m, tol_p)
-    fac_st = pom_status(fac_var, tol_m, tol_p)
-
-    if gap == 0:
-        gc = "MATCH"
-    elif td_st == fac_st:
-        gc = "NOISE"
-    else:
-        gc = "CHANGES_STATUS"
-
-    print(f"{row['code']},{fmt_frac(td_var)},{td_st},{fmt_frac(fac_var)},{fac_st},{fmt_frac(gap)},{gc}")
+csv_text = '''PASTE CSV HERE'''
+run(csv_text)
 ```
 
-Input CSV column order: `code, description, spec, tol_minus, tol_plus, td_measured, factory_measured`. All measurement values are fraction strings (`"9 1/2"`, `"1/8"`, `"17"`).
+Input CSV uses the real polo_input_size_m.csv headers: `POM_Code`, `Spec_M_Original`, `Tol_Minus`, `Tol_Plus`, `TD_Measured`, `Factory_Measured`. All measurement values are decimals. The sandbox copy (`sandbox/reference_script.py`) reads from disk for local testing; the agent version has the CSV pasted into `csv_text`.
 
 ---
 
