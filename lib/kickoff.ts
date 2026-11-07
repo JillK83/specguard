@@ -20,8 +20,8 @@ export function buildScriptText(csvText: string): string {
   return template.replace(SCRIPT_PLACEHOLDER, `csv_text = '''${normalizedCsv}'''`)
 }
 
-export function buildKickoffMessage(agentPrompt: string, productRules: string): string {
-  return [
+export function buildKickoffMessage(agentPrompt: string, productRules: string, fitNotes?: string): string {
+  const parts = [
     'TASK: Style 553972 LS Polo, Size M, all units inches.',
     '',
     'AGENT INSTRUCTIONS',
@@ -31,9 +31,12 @@ export function buildKickoffMessage(agentPrompt: string, productRules: string): 
     '',
     'PRODUCT RULES',
     productRules.trim(),
-    '',
-    'Run the audit. Write the log to output/revision_log.md and wait for approval before continuing.',
-  ].join('\n')
+  ]
+  if (fitNotes && fitNotes.trim()) {
+    parts.push('', 'FIT SESSION NOTES (reported by the designer)', fitNotes.trim())
+  }
+  parts.push('', 'Run the audit. Write the log to output/revision_log.md and wait for approval before continuing.')
+  return parts.join('\n')
 }
 
 export function loadCsvText(): string {
@@ -62,5 +65,12 @@ export function loadKickoffMessage(): string {
     throw new Error('Missing required file: product-rules.md')
   }
 
-  return buildKickoffMessage(agentPrompt, productRules)
+  let fitNotes: string | undefined
+  try {
+    fitNotes = readFileSync(join(root, 'data', 'fit_notes.md'), 'utf-8')
+  } catch {
+    // optional — omit if not present
+  }
+
+  return buildKickoffMessage(agentPrompt, productRules, fitNotes)
 }

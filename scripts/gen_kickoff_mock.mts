@@ -13,7 +13,14 @@ const placeholderCsv = readFileSync(join(root, 'data', 'polo_input_size_m.csv'),
 const agentPrompt = readFileSync(join(root, 'agent-prompt.md'), 'utf-8')
 const productRules = readFileSync(join(root, 'product-rules.md'), 'utf-8')
 
-const msg = buildKickoffMessage(agentPrompt, productRules)
+let fitNotes: string | undefined
+try {
+  fitNotes = readFileSync(join(root, 'data', 'fit_notes.md'), 'utf-8')
+} catch {
+  // optional
+}
+
+const msg = buildKickoffMessage(agentPrompt, productRules, fitNotes)
 writeFileSync(join(root, 'mock', 'kickoff_message.txt'), msg, 'utf-8')
 console.log('Written: mock/kickoff_message.txt')
 

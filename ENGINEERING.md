@@ -21,7 +21,7 @@ Test case: Style 553972, long sleeve grindle jersey polo, size M, 22 points of m
 | API key in .env.local | Done (server only) |
 | Platform test (scripts/hello.mts) | Passed. Python ran with exit code 0, write and exec were gated and approved, run finished succeeded |
 | Reference script check (9 PASS, 7 EDGE, 6 FAIL) | Done |
-| Agent prompt and rules | Not started |
+| Agent prompt and rules | In testing (first full run completed) |
 | Server routes | Not started |
 | Page | Not started |
 
